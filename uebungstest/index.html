@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Übungstest Fahrzeuginterieurmechaniker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: eine schmale Testspalte; Kopfzeile mit Timer, darunter Aufgabe, Navigation als Raster */
+:root{
+  --bg:#f3f5f7; --surface:#ffffff; --ink:#18212b; --muted:#5b6774; --line:#d7dde3;
+  --accent:#0d5f73; --accent-soft:#e1eef1;
+  --ok:#1f7a45; --ok-soft:#e3f3e9; --warn:#a86400; --warn-soft:#fbefdc; --bad:#b3261e; --bad-soft:#fbe4e2;
+  --display:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#11171d; --surface:#19222a; --ink:#e6ebef; --muted:#9aa7b3; --line:#2c3843;
+    --accent:#5fb7c9; --accent-soft:#1d3640;
+    --ok:#5cc98a; --ok-soft:#173326; --warn:#e7a948; --warn-soft:#3a2c14; --bad:#f08079; --bad-soft:#3d1d1b;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#11171d; --surface:#19222a; --ink:#e6ebef; --muted:#9aa7b3; --line:#2c3843;
+  --accent:#5fb7c9; --accent-soft:#1d3640;
+  --ok:#5cc98a; --ok-soft:#173326; --warn:#e7a948; --warn-soft:#3a2c14; --bad:#f08079; --bad-soft:#3d1d1b;
+  color-scheme: dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg); color:var(--ink); font-family:var(--body); font-size:16px; line-height:1.5}
+.wrap{max-width:760px; margin:0 auto; padding:20px 16px 48px; display:flex; flex-direction:column; gap:16px}
+h1,h2,h3{font-family:var(--display); text-wrap:balance; margin:0; line-height:1.25}
+h1{font-size:1.6rem; font-weight:700}
+h2{font-size:1.2rem; font-weight:600}
+h3{font-size:1rem; font-weight:600}
+p{margin:0}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:20px; display:flex; flex-direction:column; gap:14px}
+.muted{color:var(--muted)}
+.small{font-size:.875rem}
+.kicker{font-size:.8rem; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--accent)}
+.facts{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px}
+.fact{border:1px solid var(--line); border-radius:8px; padding:10px 12px}
+.fact b{display:block; font-family:var(--mono); font-size:1.15rem; font-variant-numeric:tabular-nums}
+.fact span{font-size:.82rem; color:var(--muted)}
+.sections{display:flex; flex-direction:column; gap:6px; padding:0; margin:0; list-style:none}
+.sections li{display:flex; justify-content:space-between; gap:12px; border-bottom:1px dashed var(--line); padding:6px 0; font-size:.95rem}
+.sections li:last-child{border-bottom:0}
+.sections .n{font-family:var(--mono); color:var(--muted); white-space:nowrap}
+.note{background:var(--accent-soft); border-radius:8px; padding:12px 14px; font-size:.92rem; display:flex; flex-direction:column; gap:6px}
+.btnrow{display:flex; flex-wrap:wrap; gap:10px}
+button{font:inherit; cursor:pointer; border-radius:8px; border:1px solid var(--line); background:var(--surface); color:var(--ink); padding:10px 16px; font-weight:500}
+button:hover{border-color:var(--accent)}
+button:focus-visible, .opt:focus-within{outline:3px solid var(--accent); outline-offset:2px}
+button.primary{background:var(--accent); border-color:var(--accent); color:var(--surface); font-weight:600}
+button.primary:hover{filter:brightness(1.08)}
+button:disabled{opacity:.45; cursor:default}
+
+/* Testansicht */
+.bar{position:sticky; top:0; z-index:5; background:var(--bg); padding:10px 0 6px; display:flex; flex-direction:column; gap:8px}
+.barrow{display:flex; justify-content:space-between; align-items:center; gap:12px}
+.timer{font-family:var(--mono); font-size:1.35rem; font-weight:600; font-variant-numeric:tabular-nums; padding:4px 12px; border-radius:8px; background:var(--surface); border:1px solid var(--line)}
+.timer.warn{color:var(--warn); background:var(--warn-soft); border-color:var(--warn)}
+.timer.crit{color:var(--bad); background:var(--bad-soft); border-color:var(--bad)}
+.progress{height:6px; background:var(--line); border-radius:3px; overflow:hidden}
+.progress i{display:block; height:100%; background:var(--accent); width:0; transition:width .2s}
+.qhead{display:flex; justify-content:space-between; align-items:baseline; gap:10px; flex-wrap:wrap}
+.qtext{font-size:1.05rem; font-weight:500}
+.fig{display:flex; justify-content:center; overflow-x:auto}
+.fig svg{max-width:100%; height:auto}
+.opts{display:grid; gap:8px}
+.opts.grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.opt{display:flex; align-items:center; gap:10px; border:1px solid var(--line); border-radius:8px; padding:10px 12px; cursor:pointer; background:var(--surface)}
+.opt:hover{border-color:var(--accent)}
+.opt input{accent-color:var(--accent); width:18px; height:18px; margin:0; flex:none}
+.opt.sel{border-color:var(--accent); background:var(--accent-soft)}
+.opt .lbl{font-family:var(--mono); font-weight:600; color:var(--muted); width:1.2em; flex:none}
+.opt svg{display:block}
+.navgrid{display:grid; grid-template-columns:repeat(10,minmax(0,1fr)); gap:6px}
+.navgrid button{padding:6px 0; font-family:var(--mono); font-size:.85rem; position:relative}
+.navgrid button.done{background:var(--accent-soft); border-color:var(--accent)}
+.navgrid button.cur{outline:2px solid var(--ink); outline-offset:1px}
+.navgrid button.flag::after{content:""; position:absolute; top:3px; right:3px; width:7px; height:7px; border-radius:50%; background:var(--warn)}
+.legend{display:flex; gap:14px; flex-wrap:wrap; font-size:.8rem; color:var(--muted)}
+.legend span{display:inline-flex; align-items:center; gap:6px}
+.sw{width:12px; height:12px; border-radius:3px; border:1px solid var(--accent); background:var(--accent-soft); display:inline-block}
+.dot{width:8px; height:8px; border-radius:50%; background:var(--warn); display:inline-block}
+.calc{font-size:.8rem; font-weight:600; padding:2px 8px; border-radius:999px; background:var(--bad-soft); color:var(--bad); white-space:nowrap}
+.modal{position:fixed; inset:0; background:rgba(0,0,0,.45); display:none; align-items:center; justify-content:center; padding:16px; z-index:20}
+.modal.show{display:flex}
+.modal .card{max-width:420px}
+
+/* Auswertung */
+.score{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap}
+.score b{font-family:var(--mono); font-size:2.4rem; font-variant-numeric:tabular-nums}
+.pill{font-size:.82rem; font-weight:600; padding:3px 10px; border-radius:999px}
+.pill.ok{background:var(--ok-soft); color:var(--ok)} .pill.warn{background:var(--warn-soft); color:var(--warn)} .pill.bad{background:var(--bad-soft); color:var(--bad)}
+.secrow{display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,2fr) auto; gap:10px; align-items:center; font-size:.92rem}
+.secbar{height:8px; background:var(--line); border-radius:4px; overflow:hidden}
+.secbar i{display:block; height:100%; background:var(--accent)}
+.secrow .n{font-family:var(--mono); font-variant-numeric:tabular-nums; color:var(--muted)}
+.sol{border-left:4px solid var(--line); padding:4px 0 4px 14px; display:flex; flex-direction:column; gap:6px}
+.sol.r{border-color:var(--ok)} .sol.w{border-color:var(--bad)} .sol.e{border-color:var(--warn)}
+.sol .meta{display:flex; gap:8px; flex-wrap:wrap; align-items:center; font-size:.85rem}
+.sol .ans{font-size:.92rem}
+.sol .ex{font-size:.92rem; color:var(--muted)}
+.hidden{display:none !important}
+@media (max-width:480px){
+  .opts.grid{grid-template-columns:1fr 1fr}
+  .navgrid{grid-template-columns:repeat(5,minmax(0,1fr))}
+  .secrow{grid-template-columns:1fr auto}
+  .secrow .secbar{grid-column:1 / -1; grid-row:2}
+}
+@media (prefers-reduced-motion:reduce){ .progress i{transition:none} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Startseite -->
+  <section id="start" class="card">
+    <div class="kicker">Simulation Online-Pre-Test · Mercedes-Benz Ausbildung</div>
+    <h1>Übungstest Fahrzeuginterieurmechaniker (w/m/d)</h1>
+    <p class="muted">20 Aufgaben im Stil des Online-Pre-Tests: Multiple Choice, knappe Zeit, Mathe ohne Taschenrechner. Der Inhalt ist nachgebaut, keine Originalaufgaben.</p>
+    <div class="facts">
+      <div class="fact"><b>20</b><span>Aufgaben, je 4 Antworten</span></div>
+      <div class="fact"><b>13:00</b><span>Minuten, ca. 39 s pro Aufgabe</span></div>
+      <div class="fact"><b>Kein TR</b><span>Taschenrechner nicht erlaubt, Papier und Stift ja</span></div>
+      <div class="fact"><b>14 / 20</b><span>Richtwert für ein solides Ergebnis</span></div>
+    </div>
+    <h2>Aufgabenbereiche</h2>
+    <ul class="sections">
+      <li><span>Mathematik: Prozent, Dreisatz, Flächen, Einheiten</span><span class="n">Nr. 1–6</span></li>
+      <li><span>Logik: Zahlen- und Buchstabenreihen, Analogien, Schlussfolgern</span><span class="n">Nr. 7–11</span></li>
+      <li><span>Technisches Verständnis: Zahnräder, Hebel, Rollen</span><span class="n">Nr. 12–15</span></li>
+      <li><span>Räumliches Denken: Würfelnetze, Drehen</span><span class="n">Nr. 16–17</span></li>
+      <li><span>Sprache: Rechtschreibung</span><span class="n">Nr. 18</span></li>
+      <li><span>Unternehmen und Beruf</span><span class="n">Nr. 19–20</span></li>
+    </ul>
+    <div class="note">
+      <b>So läuft es ab</b>
+      <span>Du kannst Aufgaben überspringen, markieren und später zurückspringen. Bei 0:00 wird automatisch abgegeben. Lösungen und Erklärungen siehst du erst nach der Abgabe.</span>
+      <span>Tipp aus Erfahrungsberichten: Wer nicht alle Aufgaben schafft, ist nicht automatisch raus. Halte dich nicht an einer Aufgabe fest.</span>
+    </div>
+    <div class="btnrow"><button class="primary" id="btnStart">Test starten</button></div>
+  </section>
+
+  <!-- Test -->
+  <section id="test" class="hidden" aria-live="polite">
+    <div class="bar">
+      <div class="barrow">
+        <span class="small muted" id="answeredInfo">0 von 20 beantwortet</span>
+        <span class="timer" id="timer" role="timer">13:00</span>
+      </div>
+      <div class="progress"><i id="prog"></i></div>
+    </div>
+    <div class="card">
+      <div class="qhead">
+        <span class="kicker" id="qSection"></span>
+        <span class="small muted" id="qNum"></span>
+      </div>
+      <p class="qtext" id="qText"></p>
+      <div class="fig" id="qFig"></div>
+      <div class="opts" id="qOpts" role="radiogroup"></div>
+      <div class="btnrow" style="justify-content:space-between">
+        <div class="btnrow">
+          <button id="btnPrev">Zurück</button>
+          <button id="btnFlag">Markieren</button>
+        </div>
+        <button class="primary" id="btnNext">Weiter</button>
+      </div>
+    </div>
+    <div class="card" style="gap:10px">
+      <div class="navgrid" id="navgrid"></div>
+      <div class="legend"><span><i class="sw"></i>beantwortet</span><span><i class="dot"></i>markiert</span></div>
+      <div class="btnrow"><button id="btnSubmit">Test abgeben</button></div>
+    </div>
+  </section>
+
+  <!-- Auswertung -->
+  <section id="result" class="hidden" style="display:flex;flex-direction:column;gap:16px">
+    <div class="card">
+      <div class="kicker">Auswertung</div>
+      <div class="score"><b id="scoreNum">0/20</b><span class="pill" id="scorePill"></span></div>
+      <p class="muted" id="scoreText"></p>
+      <div id="secStats" style="display:flex;flex-direction:column;gap:10px"></div>
+      <div class="btnrow"><button class="primary" id="btnRestart">Noch einmal versuchen</button></div>
+    </div>
+    <div class="card">
+      <h2>Lösungen und Erklärungen</h2>
+      <div id="solutions" style="display:flex;flex-direction:column;gap:16px"></div>
+    </div>
+  </section>
+
+  <p class="small muted">Grundlage: öffentliche Infos von Mercedes-Benz zum Bewerbungsablauf und Erfahrungsberichte von Bewerbern. Mercedes-Benz veröffentlicht weder Originalaufgaben noch genaue Zeitvorgaben; Umfang und Zeit sind daher Schätzwerte.</p>
+</div>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+  <div class="card">
+    <h2 id="mTitle">Test abgeben?</h2>
+    <p id="mText" class="muted"></p>
+    <div class="btnrow"><button id="mCancel">Weiter bearbeiten</button><button class="primary" id="mOk">Abgeben</button></div>
+  </div>
+</div>
+
+<script>
+(function(){
+const LIMIT = 13*60;
+const C = 'currentColor';
+
+// --- Grafiken ---
+function gearsSVG(){
+  const xs=[60,150,240,330], r=38;
+  let s='<svg viewBox="0 0 390 120" width="390" role="img" aria-label="Vier Zahnräder in einer Reihe, A links, D rechts">';
+  xs.forEach((x,i)=>{
+    s+=`<circle cx="${x}" cy="60" r="${r+5}" fill="none" stroke="${C}" stroke-width="6" stroke-dasharray="5 5" opacity=".55"/>`;
+    s+=`<circle cx="${x}" cy="60" r="${r}" fill="none" stroke="${C}" stroke-width="2"/>`;
+    s+=`<circle cx="${x}" cy="60" r="4" fill="${C}"/>`;
+    s+=`<text x="${x}" y="116" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="14" font-weight="600" fill="${C}">${'ABCD'[i]}</text>`;
+  });
+  s+=`<path d="M 38 32 A 30 30 0 0 1 82 32" fill="none" stroke="var(--accent)" stroke-width="3"/>`;
+  s+=`<path d="M 82 32 l -10 -2 l 4 9 z" fill="var(--accent)"/>`;
+  return s+'</svg>';
+}
+function gearRatioSVG(){
+  return `<svg viewBox="0 0 300 130" width="300" role="img" aria-label="Großes Zahnrad A mit 40 Zähnen greift in kleines Zahnrad B mit 10 Zähnen">
+  <circle cx="90" cy="65" r="56" fill="none" stroke="${C}" stroke-width="6" stroke-dasharray="4 4" opacity=".55"/>
+  <circle cx="90" cy="65" r="51" fill="none" stroke="${C}" stroke-width="2"/>
+  <circle cx="174" cy="65" r="18" fill="none" stroke="${C}" stroke-width="6" stroke-dasharray="4 4" opacity=".55"/>
+  <circle cx="174" cy="65" r="13" fill="none" stroke="${C}" stroke-width="2"/>
+  <text x="90" y="70" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="${C}">A · 40 Z</text>
+  <text x="235" y="70" font-family="IBM Plex Mono, monospace" font-size="13" fill="${C}">B · 10 Z</text></svg>`;
+}
+function leverSVG(){
+  return `<svg viewBox="0 0 360 140" width="360" role="img" aria-label="Hebel mit Drehpunkt; links 60 N in 20 cm Abstand, rechts gesuchte Kraft F in 40 cm Abstand">
+  <rect x="20" y="70" width="320" height="8" rx="2" fill="${C}" opacity=".8"/>
+  <path d="M 120 78 l -16 30 h 32 z" fill="none" stroke="${C}" stroke-width="2"/>
+  <rect x="40" y="38" width="40" height="32" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2"/>
+  <text x="60" y="59" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12" fill="${C}">60 N</text>
+  <path d="M 300 20 v 42" stroke="var(--accent)" stroke-width="3"/><path d="M 300 68 l -6 -10 h 12 z" fill="var(--accent)"/>
+  <text x="312" y="34" font-family="IBM Plex Mono, monospace" font-size="13" font-weight="600" fill="${C}">F = ?</text>
+  <path d="M 60 120 H 120 M 120 120 H 300" stroke="${C}" stroke-width="1"/>
+  <path d="M 60 114 v 12 M 120 114 v 12 M 300 114 v 12" stroke="${C}" stroke-width="1"/>
+  <text x="90" y="136" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" fill="${C}">20 cm</text>
+  <text x="210" y="136" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" fill="${C}">40 cm</text></svg>`;
+}
+function netSVG(cells){
+  const s=16; const mx=Math.max(...cells.map(c=>c[0]))+1, my=Math.max(...cells.map(c=>c[1]))+1;
+  let o=`<svg viewBox="-2 -2 ${mx*s+4} ${my*s+4}" width="${mx*s+4}" height="${my*s+4}" aria-hidden="true">`;
+  cells.forEach(c=>{o+=`<rect x="${c[0]*s}" y="${c[1]*s}" width="${s}" height="${s}" fill="var(--accent-soft)" stroke="${C}" stroke-width="1.5"/>`});
+  return o+'</svg>';
+}
+const F_CELLS=[[0,0],[0,1],[0,2],[0,3],[1,0],[2,0],[1,2]];
+function shapeSVG(transform, big){
+  const s=big?18:14, w=big?110:76;
+  let g=''; F_CELLS.forEach(c=>{g+=`<rect x="${(c[0]-1.5)*s}" y="${(c[1]-2)*s}" width="${s}" height="${s}" fill="var(--accent-soft)" stroke="${C}" stroke-width="1.5"/>`});
+  return `<svg viewBox="0 0 ${w} ${w}" width="${w}" height="${w}" aria-hidden="true"><g transform="translate(${w/2} ${w/2}) ${transform}">${g}</g></svg>`;
+}
+
+// --- Aufgaben ---
+const Q=[
+ {s:'Mathematik',t:'Ein Ledersitzbezug kostet 240 €. Der Lieferant gewährt 15 % Rabatt. Wie viel kostet der Bezug nach Abzug des Rabatts?',o:['196 €','204 €','210 €','225 €'],a:1,
+  e:'10 % von 240 € sind 24 €, 5 % sind 12 €, also 15 % = 36 €. 240 € − 36 € = 204 €.'},
+ {s:'Mathematik',t:'4 Mitarbeiter montieren in 6 Stunden 48 Dachhimmel. Wie viele Dachhimmel montieren 6 Mitarbeiter in 4 Stunden bei gleichem Tempo?',o:['32','48','54','72'],a:1,
+  e:'4 × 6 = 24 Arbeitsstunden ergeben 48 Teile, also 2 Teile pro Arbeitsstunde. 6 × 4 = 24 Arbeitsstunden ergeben wieder 48 Teile.'},
+ {s:'Mathematik',t:'Für eine rechteckige Sitzfläche von 50 cm × 45 cm wird Bezugsstoff zugeschnitten. Wegen Nahtzugabe und Verschnitt rechnet man 10 % mehr Material. Wie viel Stoff wird benötigt?',o:['2.250 cm²','2.400 cm²','2.475 cm²','2.500 cm²'],a:2,
+  e:'50 × 45 = 2.250 cm². 10 % davon sind 225 cm². 2.250 + 225 = 2.475 cm².'},
+ {s:'Mathematik',t:'Wie viele Quadratzentimeter sind 2,5 m²?',o:['250 cm²','2.500 cm²','25.000 cm²','250.000 cm²'],a:2,
+  e:'1 m² = 100 cm × 100 cm = 10.000 cm². 2,5 × 10.000 = 25.000 cm². Häufiger Fehler: nur mit 100 multiplizieren.'},
+ {s:'Mathematik',t:'Eine Lederhaut hat 4,8 m². Davon werden drei Viertel für Sitzbezüge verarbeitet. Wie viel Leder bleibt übrig?',o:['0,8 m²','1,2 m²','1,6 m²','3,6 m²'],a:1,
+  e:'Ein Viertel von 4,8 m² sind 1,2 m². Drei Viertel (3,6 m²) werden verbraucht, ein Viertel bleibt übrig.'},
+ {s:'Mathematik',t:'Am Montageband verlässt alle 90 Sekunden ein Fahrzeug die Station. Wie viele Fahrzeuge sind das in einer Schicht von 7,5 Stunden?',o:['250','300','320','450'],a:1,
+  e:'90 s = 1,5 min, also 40 Fahrzeuge pro Stunde (60 : 1,5). 40 × 7,5 = 300.'},
+ {s:'Logik',t:'Welche Zahl setzt die Reihe fort?  3 · 6 · 12 · 15 · 30 · 33 · ?',o:['36','60','63','66'],a:3,
+  e:''},
+ {s:'Logik',t:'Welche Zahl setzt die Reihe fort?  2 · 5 · 10 · 17 · 26 · ?',o:['35','36','37','39'],a:2,
+  e:'Die Abstände steigen um 2: +3, +5, +7, +9, +11. 26 + 11 = 37. (Alternativ: n² + 1 mit n = 1 bis 6.)'},
+ {s:'Logik',t:'Schere verhält sich zu schneiden wie Tacker zu …',o:['kleben','heften','nähen','bohren'],a:1,
+  e:'Die Beziehung ist Werkzeug → typische Tätigkeit. Mit dem Tacker wird geheftet, z. B. Bezugsstoff auf Trägerteile.'},
+ {s:'Logik',t:'Alle Bezüge in Halle 3 sind aus Leder. Kein Lederbezug ist schwarz. Welche Aussage folgt daraus sicher?',o:['Alle schwarzen Bezüge liegen in Halle 3.','Kein Bezug in Halle 3 ist schwarz.','Einige Bezüge in Halle 3 sind schwarz.','Alle Lederbezüge liegen in Halle 3.'],a:1,
+  e:'Halle 3 ⊂ Leder und Leder ∩ schwarz = leer. Also kann kein Bezug aus Halle 3 schwarz sein. Die anderen Aussagen lassen sich aus den Prämissen nicht ableiten.'},
+ {s:'Logik',t:'Welcher Buchstabe setzt die Reihe fort?  A · C · F · J · O · ?',o:['S','T','U','V'],a:2,
+  e:'Die Abstände im Alphabet wachsen um eins: +2, +3, +4, +5, +6. O ist der 15. Buchstabe, 15 + 6 = 21 → U.'},
+ {s:'Technisches Verständnis',t:'Vier Zahnräder greifen nacheinander ineinander. Zahnrad A dreht sich im Uhrzeigersinn. In welche Richtung dreht sich Zahnrad D?',f:gearsSVG(),o:['Im Uhrzeigersinn','Gegen den Uhrzeigersinn','Gar nicht, das Getriebe blockiert','Abwechselnd in beide Richtungen'],a:1,
+  e:'Jedes eingreifende Zahnrad kehrt die Drehrichtung um: A im, B gegen, C im, D gegen den Uhrzeigersinn. Gerade Anzahl in einer offenen Reihe: das letzte dreht entgegengesetzt zum ersten.'},
+ {s:'Technisches Verständnis',t:'Zahnrad A (40 Zähne) treibt Zahnrad B (10 Zähne) an. A macht 3 Umdrehungen. Wie viele Umdrehungen macht B?',f:gearRatioSVG(),o:['0,75','3','12','30'],a:2,
+  e:'Übersetzung 40 : 10 = 4. Pro Umdrehung von A dreht sich B viermal. 3 × 4 = 12.'},
+ {s:'Technisches Verständnis',t:'Am Hebel hängt links eine Last von 60 N in 20 cm Abstand zum Drehpunkt. Welche Kraft F muss rechts in 40 cm Abstand wirken, damit der Hebel im Gleichgewicht ist?',f:leverSVG(),o:['15 N','30 N','60 N','120 N'],a:1,
+  e:'Hebelgesetz: Kraft × Kraftarm = Last × Lastarm. 60 N × 20 cm = F × 40 cm → F = 1.200 : 40 = 30 N. Doppelter Hebelarm, halbe Kraft.'},
+ {s:'Technisches Verständnis',t:'Eine Sitzschiene mit 400 N Gewichtskraft wird mit einer festen und einer losen Rolle (einfacher Flaschenzug, zwei tragende Seilstücke) angehoben. Welche Zugkraft ist ohne Reibung nötig?',o:['100 N','200 N','400 N','800 N'],a:1,
+  e:'Die lose Rolle verteilt die Last auf zwei tragende Seilstücke: 400 N : 2 = 200 N. Dafür muss man doppelt so viel Seil ziehen. Die feste Rolle ändert nur die Zugrichtung.'},
+ {s:'Räumliches Denken',t:'Aus welcher Abwicklung lässt sich kein Würfel falten?',grid:true,
+  o:[netSVG([[1,0],[0,1],[1,1],[2,1],[3,1],[1,2]]),netSVG([[0,0],[1,0],[1,1],[2,1],[2,2],[3,2]]),netSVG([[1,0],[0,1],[1,1],[2,1],[3,1],[4,1]]),netSVG([[0,0],[1,0],[2,0],[2,1],[3,1],[4,1]])],a:2,
+  labels:['Kreuz (1-4-1)','Treppe (2-2-2)','Fünf in einer Reihe','Zwei Dreierreihen (3-3)'],
+  e:'Ein Würfel hat nur vier Seiten rundherum. Fünf Quadrate in einer Reihe würden sich beim Falten überlappen. Kreuz, 2-2-2-Treppe und 3-3-Form sind gültige Würfelnetze.'},
+ {s:'Räumliches Denken',t:'Welche Figur entsteht allein durch Drehen der Vorlage, ohne sie zu spiegeln?',f:'<div style="display:flex;flex-direction:column;align-items:center;gap:4px">'+shapeSVG('',true)+'<span class="small muted">Vorlage</span></div>',grid:true,
+  o:[shapeSVG('scale(-1 1)'),shapeSVG('rotate(90)'),shapeSVG('rotate(90) scale(-1 1)'),shapeSVG('rotate(180) scale(-1 1)')],a:1,
+  labels:['gespiegelt','um 90° gedreht','gespiegelt und gedreht','gespiegelt (senkrecht)'],
+  e:'B ist die Vorlage um 90° im Uhrzeigersinn gedreht. A, C und D sind Spiegelbilder: Verfolge den kurzen Mittelbalken. Bei einer reinen Drehung bleibt er auf derselben Seite des langen Balkens wie der obere Querbalken – im Drehsinn betrachtet.'},
+ {s:'Sprache',t:'Welches Wort ist richtig geschrieben?',o:['Reperatur','Reparatur','Repratur','Reparatuhr'],a:1,
+  e:'Richtig ist „Reparatur“ (von lateinisch reparare). „Reperatur“ ist einer der häufigsten Rechtschreibfehler in Einstellungstests.'},
+ {s:'Unternehmen und Beruf',t:'Wofür stehen die drei Zacken des Mercedes-Sterns?',o:['Qualität, Sicherheit und Komfort','Motorisierung zu Lande, zu Wasser und in der Luft','Die drei Gründer Daimler, Benz und Maybach','PKW, LKW und Busse'],a:1,
+  e:'Der Stern geht auf Gottlieb Daimler zurück und steht für die Motorisierung zu Lande, zu Wasser und in der Luft. Fragen zur Marke und Geschichte tauchen in Erfahrungsberichten regelmäßig auf.'},
+ {s:'Unternehmen und Beruf',t:'Welche Tätigkeit gehört typischerweise zum Beruf Fahrzeuginterieurmechaniker/-in?',o:['Motorsteuergeräte programmieren','Karosserieteile lackieren','Sitze polstern und beziehen, Dachhimmel und Verkleidungen montieren','Fahrwerke vermessen und einstellen'],a:2,
+  e:'Fahrzeuginterieurmechaniker fertigen und montieren Innenausstattung: Sitze, Dachhimmel, Tür- und Seitenverkleidungen, Teppiche. Sie arbeiten mit Leder, Textilien, Schaumstoffen und Kunststoffen.'}
+];
+Q[6].e='Abwechselnd +3 und ×2: 3 (+3) 6 (×2) 12 (+3) 15 (×2) 30 (+3) 33 (×2) 66.';
+Q[16].e='B ist die Vorlage um 90° im Uhrzeigersinn gedreht. A, C und D sind Spiegelbilder. Prüftrick: Stell den langen Balken jeder Figur gedanklich senkrecht, mit dem Querbalken oben. Bei der Vorlage und bei B zeigen Querbalken und kurzer Mittelbalken dann nach rechts, bei A, C und D nach links.';
+
+let cur=0, ans=new Array(Q.length).fill(null), flags=new Array(Q.length).fill(false), left=LIMIT, tick=null, finished=false;
+const $=id=>document.getElementById(id);
+
+function fmt(sec){const m=Math.floor(sec/60), s=sec%60; return m+':'+String(s).padStart(2,'0');}
+
+function render(){
+  const q=Q[cur];
+  $('qSection').textContent=q.s;
+  $('qNum').textContent='Aufgabe '+(cur+1)+' von '+Q.length;
+  $('qText').textContent=q.t;
+  const fig=$('qFig'); fig.innerHTML=q.f||''; fig.classList.toggle('hidden',!q.f);
+  const box=$('qOpts'); box.innerHTML=''; box.classList.toggle('grid',!!q.grid);
+  q.o.forEach((o,i)=>{
+    const id='q'+cur+'o'+i;
+    const lab=document.createElement('label'); lab.className='opt'+(ans[cur]===i?' sel':''); lab.htmlFor=id;
+    lab.innerHTML=`<input type="radio" name="q${cur}" id="${id}" ${ans[cur]===i?'checked':''}><span class="lbl">${'ABCD'[i]}</span><span>${o}</span>`;
+    lab.querySelector('input').addEventListener('change',()=>{ans[cur]=i; render();});
+    box.appendChild(lab);
+  });
+  $('btnPrev').disabled=cur===0;
+  $('btnNext').textContent=cur===Q.length-1?'Zur Abgabe':'Weiter';
+  $('btnFlag').textContent=flags[cur]?'Markierung entfernen':'Markieren';
+  const done=ans.filter(a=>a!==null).length;
+  $('answeredInfo').textContent=done+' von '+Q.length+' beantwortet';
+  $('prog').style.width=(done/Q.length*100)+'%';
+  const ng=$('navgrid'); ng.innerHTML='';
+  Q.forEach((_,i)=>{
+    const b=document.createElement('button'); b.textContent=i+1;
+    b.className=(ans[i]!==null?'done ':'')+(flags[i]?'flag ':'')+(i===cur?'cur':'');
+    b.setAttribute('aria-label','Aufgabe '+(i+1)+(ans[i]!==null?', beantwortet':'')+(flags[i]?', markiert':''));
+    b.addEventListener('click',()=>{cur=i; render();});
+    ng.appendChild(b);
+  });
+}
+function updTimer(){
+  const t=$('timer'); t.textContent=fmt(left);
+  t.classList.toggle('warn',left<=180&&left>60); t.classList.toggle('crit',left<=60);
+}
+function start(){
+  cur=0; ans.fill(null); flags.fill(false); left=LIMIT; finished=false;
+  $('start').classList.add('hidden'); $('result').classList.add('hidden'); $('test').classList.remove('hidden');
+  updTimer(); render(); window.scrollTo(0,0);
+  clearInterval(tick);
+  tick=setInterval(()=>{left--; updTimer(); if(left<=0){finish(true);}},1000);
+}
+function askSubmit(){
+  const open=ans.filter(a=>a===null).length;
+  $('mText').textContent=open?('Noch '+open+' Aufgabe(n) unbeantwortet. Restzeit: '+fmt(left)+'.'):'Alle Aufgaben beantwortet. Restzeit: '+fmt(left)+'.';
+  $('modal').classList.add('show'); $('mOk').focus();
+}
+function finish(timeout){
+  if(finished) return; finished=true; clearInterval(tick);
+  $('modal').classList.remove('show');
+  $('test').classList.add('hidden'); $('result').classList.remove('hidden');
+  const right=Q.reduce((n,q,i)=>n+(ans[i]===q.a?1:0),0);
+  const used=LIMIT-Math.max(left,0);
+  $('scoreNum').textContent=right+'/'+Q.length;
+  const p=$('scorePill');
+  if(right>=16){p.className='pill ok';p.textContent='Sehr gut';}
+  else if(right>=14){p.className='pill ok';p.textContent='Solide';}
+  else if(right>=10){p.className='pill warn';p.textContent='Ausbaufähig';}
+  else {p.className='pill bad';p.textContent='Weiter üben';}
+  const open=ans.filter(a=>a===null).length;
+  $('scoreText').textContent=(timeout?'Die Zeit ist abgelaufen. ':'Abgegeben nach '+fmt(used)+' Minuten. ')+open+' Aufgabe(n) unbeantwortet.';
+  const secs=[...new Set(Q.map(q=>q.s))]; let h='';
+  secs.forEach(s=>{
+    const idx=Q.map((q,i)=>q.s===s?i:-1).filter(i=>i>=0);
+    const r=idx.filter(i=>ans[i]===Q[i].a).length;
+    h+=`<div class="secrow"><span>${s}</span><div class="secbar"><i style="width:${r/idx.length*100}%"></i></div><span class="n">${r}/${idx.length}</span></div>`;
+  });
+  $('secStats').innerHTML=h;
+  let sh='';
+  Q.forEach((q,i)=>{
+    const st=ans[i]===null?'e':(ans[i]===q.a?'r':'w');
+    const pill=st==='r'?'<span class="pill ok">richtig</span>':st==='w'?'<span class="pill bad">falsch</span>':'<span class="pill warn">offen</span>';
+    const txt=k=>q.labels?('Option '+'ABCD'[k]+' ('+q.labels[k]+')'):('Option '+'ABCD'[k]+': '+q.o[k]);
+    sh+=`<div class="sol ${st}"><div class="meta"><b>Aufgabe ${i+1}</b><span class="muted">${q.s}</span>${pill}</div>
+      <div class="ans">${q.t}</div>
+      <div class="ans"><b>Lösung:</b> ${txt(q.a)}${st==='w'?'<br><span class="muted">Deine Antwort: '+txt(ans[i])+'</span>':''}</div>
+      <div class="ex">${q.e}</div></div>`;
+  });
+  $('solutions').innerHTML=sh;
+  window.scrollTo(0,0);
+}
+$('btnStart').addEventListener('click',start);
+$('btnRestart').addEventListener('click',start);
+$('btnPrev').addEventListener('click',()=>{if(cur>0){cur--;render();}});
+$('btnNext').addEventListener('click',()=>{if(cur<Q.length-1){cur++;render();}else askSubmit();});
+$('btnFlag').addEventListener('click',()=>{flags[cur]=!flags[cur];render();});
+$('btnSubmit').addEventListener('click',askSubmit);
+$('mCancel').addEventListener('click',()=>$('modal').classList.remove('show'));
+$('mOk').addEventListener('click',()=>finish(false));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')$('modal').classList.remove('show');});
+})();
+</script>
+</body>
+</html>
