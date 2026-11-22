@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lernseite Einstellungstest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: Themen-Chips oben, darunter Erklärkarte und drei Stufen mit Aufgaben */
+:root{
+  --bg:#f3f5f7; --surface:#ffffff; --ink:#18212b; --muted:#5b6774; --line:#d7dde3;
+  --accent:#0d5f73; --accent-soft:#e1eef1;
+  --ok:#1f7a45; --ok-soft:#e3f3e9; --warn:#a86400; --warn-soft:#fbefdc; --bad:#b3261e; --bad-soft:#fbe4e2;
+  --display:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#11171d; --surface:#19222a; --ink:#e6ebef; --muted:#9aa7b3; --line:#2c3843;
+    --accent:#5fb7c9; --accent-soft:#1d3640;
+    --ok:#5cc98a; --ok-soft:#173326; --warn:#e7a948; --warn-soft:#3a2c14; --bad:#f08079; --bad-soft:#3d1d1b;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#11171d; --surface:#19222a; --ink:#e6ebef; --muted:#9aa7b3; --line:#2c3843;
+  --accent:#5fb7c9; --accent-soft:#1d3640;
+  --ok:#5cc98a; --ok-soft:#173326; --warn:#e7a948; --warn-soft:#3a2c14; --bad:#f08079; --bad-soft:#3d1d1b;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg); color:var(--ink); font-family:var(--body); font-size:16px; line-height:1.55}
+.wrap{max-width:780px; margin:0 auto; padding:20px 16px 48px; display:flex; flex-direction:column; gap:16px}
+h1,h2,h3{font-family:var(--display); text-wrap:balance; margin:0; line-height:1.25}
+h1{font-size:1.6rem; font-weight:700} h2{font-size:1.25rem; font-weight:600} h3{font-size:1rem; font-weight:600}
+p{margin:0}
+a{color:var(--accent)}
+.muted{color:var(--muted)} .small{font-size:.875rem}
+.kicker{font-size:.8rem; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--accent)}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:20px; display:flex; flex-direction:column; gap:12px}
+.head{display:flex; flex-direction:column; gap:6px}
+.toplinks{display:flex; gap:14px; flex-wrap:wrap; font-size:.9rem}
+.chips{display:flex; flex-wrap:wrap; gap:8px}
+.chip{font:inherit; font-size:.92rem; cursor:pointer; border:1px solid var(--line); background:var(--surface); color:var(--ink); border-radius:999px; padding:7px 14px; display:inline-flex; gap:8px; align-items:center}
+.chip:hover{border-color:var(--accent)}
+.chip.on{background:var(--accent); border-color:var(--accent); color:var(--surface); font-weight:600}
+.chip .cnt{font-family:var(--mono); font-size:.78rem; opacity:.8}
+.chip:focus-visible, button:focus-visible, input:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
+.explain ul{margin:0; padding-left:1.2em; display:flex; flex-direction:column; gap:4px}
+.formula{font-family:var(--mono); font-size:.95rem; background:var(--accent-soft); border-radius:8px; padding:10px 14px; display:flex; flex-direction:column; gap:4px; overflow-x:auto}
+.example{border-left:4px solid var(--accent); padding:2px 0 2px 14px; display:flex; flex-direction:column; gap:4px}
+.trick{background:var(--warn-soft); border-radius:8px; padding:10px 14px; font-size:.93rem}
+.trick b{color:var(--warn)}
+.level{display:flex; flex-direction:column; gap:10px}
+.levelhead{display:flex; align-items:center; gap:10px}
+.stars{font-family:var(--mono); color:var(--accent); letter-spacing:2px}
+.task{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:16px; display:flex; flex-direction:column; gap:10px; border-left-width:4px}
+.task.ok{border-left-color:var(--ok)} .task.bad{border-left-color:var(--bad)}
+.task .q{font-weight:500}
+.row{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+input[type=text]{font:inherit; font-family:var(--mono); width:150px; padding:8px 10px; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--ink)}
+.unit{font-family:var(--mono); color:var(--muted)}
+button{font:inherit; cursor:pointer; border-radius:8px; border:1px solid var(--line); background:var(--surface); color:var(--ink); padding:8px 14px; font-weight:500}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent); border-color:var(--accent); color:var(--surface); font-weight:600}
+.choice{display:flex; flex-wrap:wrap; gap:8px}
+.choice button.sel{background:var(--accent-soft); border-color:var(--accent)}
+.fb{font-size:.92rem; font-weight:600}
+.fb.ok{color:var(--ok)} .fb.bad{color:var(--bad)}
+.sol{font-size:.93rem; background:var(--bg); border-radius:8px; padding:10px 12px; display:flex; flex-direction:column; gap:4px}
+.sol .s{font-family:var(--mono); font-size:.88rem}
+.progress{display:flex; align-items:center; gap:10px; font-size:.88rem; color:var(--muted)}
+.pbar{flex:1; height:6px; background:var(--line); border-radius:3px; overflow:hidden}
+.pbar i{display:block; height:100%; background:var(--ok)}
+.hidden{display:none !important}
+@media (max-width:480px){ input[type=text]{width:120px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="head">
+    <div class="kicker">Vorbereitung Einstellungstest · Technische Ausbildung</div>
+    <h1>Lernseite: kurz erklärt, dann üben</h1>
+    <p class="muted">Wähle ein Thema. Lies die Erklärung, dann löse die Aufgaben von Stufe 1 bis 3. Ohne Taschenrechner, wie im Test. Kommazahlen mit Komma oder Punkt, Brüche als 3/4.</p>
+    <div class="toplinks"><a href="../uebungstest/">Zum Übungstest (20 Aufgaben, 13 Minuten)</a><a href="../">Zur Startseite</a></div>
+  </header>
+
+  <nav class="chips" id="chips" aria-label="Themen"></nav>
+
+  <section class="card explain" id="explain"></section>
+
+  <div class="progress"><span id="progText"></span><div class="pbar"><i id="progBar"></i></div><button id="btnReset">Thema zurücksetzen</button></div>
+
+  <div id="levels" style="display:flex;flex-direction:column;gap:18px"></div>
+</div>
+
+<script>
+(function(){
+const T=[
+{id:'prozent',name:'Prozentrechnung',
+ intro:'Prozent heißt „von Hundert“. 1 % ist ein Hundertstel vom Ganzen. Drei Größen hängen zusammen: Grundwert (das Ganze), Prozentsatz (wie viel %) und Prozentwert (der Anteil).',
+ formula:['Prozentwert = Grundwert × Prozentsatz : 100','Prozentsatz = Prozentwert : Grundwert × 100','Grundwert = Prozentwert : Prozentsatz × 100'],
+ example:['Wie viel sind 15 % von 240 €?','10 % = 24 €, 5 % = 12 € → 15 % = 36 €'],
+ trick:'Rechne über 10 % und 1 %: 10 % = Komma eine Stelle nach links. 50 % = Hälfte, 25 % = Viertel, 20 % = Fünftel. Bei Auf- und Abschlägen: +15 % heißt ×1,15, −20 % heißt ×0,8.',
+ tasks:[
+  [{q:'Wie viel sind 20 % von 150 €?',a:30,u:'€',s:'10 % = 15 €, also 20 % = 2 × 15 € = 30 €.'},
+   {q:'Wie viel sind 25 % von 80 m Stoff?',a:20,u:'m',s:'25 % ist ein Viertel: 80 : 4 = 20 m.'}],
+  [{q:'Ein Werkzeug kostet 60 €. Der Preis steigt um 15 %. Neuer Preis?',a:69,u:'€',s:'10 % = 6 €, 5 % = 3 € → 15 % = 9 €. 60 + 9 = 69 €.'},
+   {q:'Von 180 geprüften Teilen sind 45 fehlerhaft. Wie viel Prozent sind das?',a:25,u:'%',s:'45 : 180 = 1/4 = 25 %.'}],
+  [{q:'Nach 20 % Rabatt kostet ein Sitz 320 €. Was war der ursprüngliche Preis?',a:400,u:'€',s:'320 € entsprechen 80 %. 1 % = 4 €, also 100 % = 400 €. Achtung: nicht 320 + 20 % rechnen.'},
+   {q:'Ein Preis von 200 € steigt erst um 10 % und sinkt dann um 10 %. Endpreis?',a:198,u:'€',s:'200 × 1,1 = 220 €. Davon 10 % = 22 €. 220 − 22 = 198 €. Die zweite Änderung bezieht sich auf den neuen Grundwert.'}]
+ ]},
+{id:'dreisatz',name:'Dreisatz',
+ intro:'Beim Dreisatz schließt du in drei Schritten von einer bekannten Menge auf eine gesuchte. Erst entscheiden: Ist der Zusammenhang proportional (mehr → mehr) oder umgekehrt proportional (mehr → weniger)?',
+ formula:['Proportional:  erst teilen, dann malnehmen','Umgekehrt:     erst malnehmen, dann teilen','Mehrfach:      auf „1 Einheit“ (z. B. 1 Mitarbeiter in 1 Stunde) runterrechnen'],
+ example:['3 m Stoff kosten 27 €. Was kosten 7 m?','1 m = 27 : 3 = 9 € → 7 m = 7 × 9 = 63 €'],
+ trick:'Bei „Mitarbeiter und Stunden“ rechnest du die Arbeitsmenge aus: Mitarbeiter × Stunden = Arbeitsstunden. Gleiche Arbeitsstunden bedeuten gleiche Stückzahl.',
+ tasks:[
+  [{q:'3 m Stoff kosten 27 €. Was kosten 7 m?',a:63,u:'€',s:'1 m = 9 €, 7 m = 63 €.'},
+   {q:'5 Kopfstützen wiegen 6 kg. Wie viel wiegen 8 Kopfstützen?',a:9.6,u:'kg',s:'1 Stück = 6 : 5 = 1,2 kg. 8 × 1,2 = 9,6 kg.'}],
+  [{q:'6 Arbeiter brauchen für einen Auftrag 10 Tage. Wie lange brauchen 4 Arbeiter?',a:15,u:'Tage',s:'Umgekehrt proportional: 6 × 10 = 60 Arbeitstage. 60 : 4 = 15 Tage.'},
+   {q:'Eine Maschine fertigt 120 Teile in 40 Minuten. Wie viele Teile in 1,5 Stunden?',a:270,u:'Teile',s:'120 : 40 = 3 Teile pro Minute. 1,5 h = 90 min. 90 × 3 = 270.'}],
+  [{q:'5 Maschinen fertigen in 8 Stunden 400 Teile. Wie viele Teile fertigen 3 Maschinen in 6 Stunden?',a:180,u:'Teile',s:'5 × 8 = 40 Maschinenstunden für 400 Teile → 10 Teile pro Maschinenstunde. 3 × 6 = 18 → 180 Teile.'},
+   {q:'Ein Vorrat reicht 15 Personen 12 Tage. Nach 4 Tagen kommen 5 Personen dazu. Wie viele Tage reicht der Rest noch?',a:6,u:'Tage',s:'Rest: 8 Tage × 15 Personen = 120 Personentage. Jetzt 20 Personen: 120 : 20 = 6 Tage.'}]
+ ]},
+{id:'einheiten',name:'Einheiten umrechnen',
+ intro:'Bei Längen ist der Schritt zwischen den Einheiten 10, bei Flächen 100, bei Volumen 1.000. Zeit rechnet mit 60. Von groß nach klein malnehmen, von klein nach groß teilen.',
+ formula:['Länge:   1 m = 10 dm = 100 cm = 1.000 mm','Fläche:  1 m² = 100 dm² = 10.000 cm²','Volumen: 1 dm³ = 1 l = 1.000 cm³ = 1.000 ml','Zeit:    1 h = 60 min = 3.600 s','Tempo:   km/h : 3,6 = m/s'],
+ example:['Wie viel cm² sind 2,5 m²?','2,5 × 10.000 = 25.000 cm²'],
+ trick:'Häufigster Fehler im Test: Flächen nur mit 100 statt mit 10.000 umrechnen. Merke: ein Quadratmeter ist 100 cm mal 100 cm.',
+ tasks:[
+  [{q:'3,5 m = ? cm',a:350,u:'cm',s:'3,5 × 100 = 350 cm.'},
+   {q:'4.500 g = ? kg',a:4.5,u:'kg',s:'4.500 : 1.000 = 4,5 kg.'}],
+  [{q:'1,2 m² = ? cm²',a:12000,u:'cm²',s:'1,2 × 10.000 = 12.000 cm².'},
+   {q:'2,5 h = ? min',a:150,u:'min',s:'2 h = 120 min, 0,5 h = 30 min → 150 min.'}],
+  [{q:'72 km/h = ? m/s',a:20,u:'m/s',s:'72.000 m in 3.600 s → 72 : 3,6 = 20 m/s.'},
+   {q:'2,4 l = ? cm³',a:2400,u:'cm³',s:'1 l = 1 dm³ = 1.000 cm³ → 2.400 cm³.'}]
+ ]},
+{id:'flaechen',name:'Flächen und Volumen',
+ intro:'Fläche misst, wie viel Stoff oder Leder du für ein Teil brauchst. Volumen misst, wie viel in einen Körper passt. Vor dem Rechnen alle Maße in dieselbe Einheit bringen.',
+ formula:['Rechteck:  A = a × b        U = 2a + 2b','Dreieck:   A = g × h : 2','Kreis:     A = π × r²      (π ≈ 3,14)','Quader:    V = a × b × c'],
+ example:['Sitzfläche 50 cm × 45 cm, plus 10 % Verschnitt','50 × 45 = 2.250 cm² → +225 cm² = 2.475 cm²'],
+ trick:'Beim Kreis aufpassen: Gegeben ist oft der Durchmesser. Erst halbieren, dann quadrieren.',
+ tasks:[
+  [{q:'Ein Rechteck ist 8 cm lang und 5 cm breit. Fläche?',a:40,u:'cm²',s:'8 × 5 = 40 cm².'},
+   {q:'Ein rechteckiger Raum ist 12 m × 7 m groß. Wie lang ist der Umfang?',a:38,u:'m',s:'2 × 12 + 2 × 7 = 24 + 14 = 38 m.'}],
+  [{q:'Ein dreieckiges Zuschnittteil hat die Grundseite 10 cm und die Höhe 6 cm. Fläche?',a:30,u:'cm²',s:'10 × 6 : 2 = 30 cm².'},
+   {q:'Ein Behälter ist 20 cm × 10 cm × 5 cm groß. Wie viele Liter passen hinein?',a:1,u:'l',s:'20 × 10 × 5 = 1.000 cm³ = 1 dm³ = 1 Liter.'}],
+  [{q:'Ein rundes Polster hat 20 cm Durchmesser. Fläche mit π ≈ 3,14?',a:314,u:'cm²',s:'r = 10 cm. 3,14 × 10 × 10 = 314 cm².'},
+   {q:'Ein Bezug misst 1,2 m × 0,8 m. Darin wird ein quadratisches Loch mit 20 cm Seitenlänge ausgeschnitten. Restfläche in cm²?',a:9200,u:'cm²',s:'120 cm × 80 cm = 9.600 cm². Loch 20 × 20 = 400 cm². 9.600 − 400 = 9.200 cm².'}]
+ ]},
+{id:'brueche',name:'Brüche',
+ intro:'Ein Bruch ist eine geteilte Zahl: Zähler oben, Nenner unten. 3/4 heißt: das Ganze in 4 Teile teilen und 3 davon nehmen.',
+ formula:['Addieren:    gleichen Nenner herstellen, dann Zähler addieren','Multiplizieren: Zähler × Zähler, Nenner × Nenner','Dividieren:  mit dem Kehrwert malnehmen','„3/4 von 60“: 60 : 4 × 3 = 45'],
+ example:['1/2 + 1/4','2/4 + 1/4 = 3/4'],
+ trick:'Vor dem Malnehmen kürzen spart Zeit: 3/5 × 10/9 → 3 und 9 durch 3, 10 und 5 durch 5 → 1/1 × 2/3 = 2/3.',
+ tasks:[
+  [{q:'1/2 + 1/4 = ?',a:0.75,u:'',s:'2/4 + 1/4 = 3/4 (= 0,75).'},
+   {q:'Wie viel sind 3/4 von 60?',a:45,u:'',s:'60 : 4 = 15, × 3 = 45.'}],
+  [{q:'2/3 + 1/6 = ?',a:5/6,u:'',s:'4/6 + 1/6 = 5/6.'},
+   {q:'3/5 × 10/9 = ?',a:2/3,u:'',s:'Kürzen: (3 × 10) : (5 × 9) = 30/45 = 2/3.'}],
+  [{q:'3/4 : 3/8 = ?',a:2,u:'',s:'Mit dem Kehrwert malnehmen: 3/4 × 8/3 = 24/12 = 2.'},
+   {q:'Ein Tank ist zu 2/5 gefüllt, das sind 24 Liter. Wie viel fasst er insgesamt?',a:60,u:'l',s:'1/5 = 12 l, 5/5 = 60 l.'}]
+ ]},
+{id:'reihen',name:'Zahlenreihen',
+ intro:'Bei Zahlenreihen suchst du die Regel, nach der die nächste Zahl entsteht. Schreib dir die Differenzen oder Faktoren zwischen den Zahlen auf.',
+ formula:['1. Differenzen prüfen: konstant? steigend?','2. Faktoren prüfen: ×2, :3 …','3. Abwechselnde Regeln: +3, ×2, +3, ×2 …','4. Bekannte Muster: Quadratzahlen, Fibonacci'],
+ example:['2 · 5 · 10 · 17 · 26 · ?','Differenzen +3 +5 +7 +9 → nächste +11 → 37'],
+ trick:'Wenn die Zahlen erst steigen und dann fallen, steckt oft eine abwechselnde Regel dahinter. Betrachte dann jede zweite Zahl getrennt.',
+ tasks:[
+  [{q:'4 · 8 · 12 · 16 · ?',a:20,u:'',s:'Immer +4.'},
+   {q:'81 · 27 · 9 · 3 · ?',a:1,u:'',s:'Immer : 3.'}],
+  [{q:'1 · 4 · 9 · 16 · 25 · ?',a:36,u:'',s:'Quadratzahlen: 1², 2², … 6² = 36.'},
+   {q:'2 · 3 · 5 · 8 · 12 · ?',a:17,u:'',s:'Differenzen +1, +2, +3, +4, +5 → 12 + 5 = 17.'}],
+  [{q:'5 · 10 · 7 · 14 · 11 · 22 · ?',a:19,u:'',s:'Abwechselnd ×2 und −3: 22 − 3 = 19.'},
+   {q:'1 · 1 · 2 · 3 · 5 · 8 · 13 · ?',a:21,u:'',s:'Fibonacci: jede Zahl ist die Summe der zwei davor. 8 + 13 = 21.'}]
+ ]},
+{id:'technik',name:'Zahnräder, Hebel, Rollen',
+ intro:'Technisches Verständnis wird im Test mit einfachen Grundregeln abgefragt. Wer drei Regeln kennt, löst die meisten Aufgaben.',
+ formula:['Zahnräder: jedes Rad kehrt die Drehrichtung um','Übersetzung: Umdrehungen klein = Umdrehungen groß × Zähne groß : Zähne klein','Hebel: Kraft × Kraftarm = Last × Lastarm','Flaschenzug: Zugkraft = Last : Anzahl tragender Seilstücke'],
+ example:['60 N Last in 20 cm, Kraft in 40 cm Abstand?','60 × 20 = F × 40 → F = 30 N'],
+ trick:'Zahnräder in einer Reihe: ungerade Position (1., 3., 5. …) dreht wie das erste, gerade Position andersherum.',
+ tasks:[
+  [{q:'Zahnrad A dreht sich im Uhrzeigersinn und greift in Zahnrad B. Wie dreht sich B?',c:['Im Uhrzeigersinn','Gegen den Uhrzeigersinn'],a:1,s:'Zwei Zahnräder, die ineinandergreifen, drehen immer entgegengesetzt.'},
+   {q:'Eine Last von 100 N hängt 30 cm vom Drehpunkt. Welche Kraft brauchst du in 60 cm Abstand?',a:50,u:'N',s:'100 × 30 = F × 60 → F = 3.000 : 60 = 50 N.'}],
+  [{q:'Zahnrad A (30 Zähne) treibt Zahnrad B (15 Zähne) an. A macht 4 Umdrehungen. Wie viele macht B?',a:8,u:'',s:'Übersetzung 30 : 15 = 2. 4 × 2 = 8 Umdrehungen.'},
+   {q:'Fünf Zahnräder greifen in einer Reihe ineinander. Das erste dreht im Uhrzeigersinn. Wie dreht das fünfte?',c:['Im Uhrzeigersinn','Gegen den Uhrzeigersinn'],a:0,s:'Ungerade Position (1., 3., 5.) dreht wie das erste Rad.'}],
+  [{q:'Eine Last von 200 N wirkt 15 cm vom Drehpunkt. Du kannst höchstens 50 N aufbringen. Wie weit vom Drehpunkt musst du mindestens drücken?',a:60,u:'cm',s:'200 × 15 = 50 × x → x = 3.000 : 50 = 60 cm.'},
+   {q:'Ein Flaschenzug hat 4 tragende Seilstücke. Die Last beträgt 800 N. Welche Zugkraft ist ohne Reibung nötig?',a:200,u:'N',s:'800 : 4 = 200 N. Dafür musst du viermal so viel Seil ziehen, wie die Last steigt.'}]
+ ]}
+];
+const LV=['Stufe 1 · Einstieg','Stufe 2 · Testniveau','Stufe 3 · Knifflig'];
+const $=id=>document.getElementById(id);
+let solved={};
+try{solved=JSON.parse(localStorage.getItem('lernseite-solved')||'{}')}catch(e){solved={}}
+function save(){try{localStorage.setItem('lernseite-solved',JSON.stringify(solved))}catch(e){}}
+
+function parseNum(v){
+  v=String(v).trim().replace(/\s/g,'').replace(/\.(?=\d{3}(\D|$))/g,'').replace(',','.');
+  if(/^-?\d+(\.\d+)?\/\d+(\.\d+)?$/.test(v)){const [a,b]=v.split('/').map(Number); return b?a/b:NaN;}
+  return v===''?NaN:Number(v);
+}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+function counts(t){let n=0;t.tasks.forEach((l,li)=>l.forEach((_,ti)=>{if(solved[t.id+'-'+li+'-'+ti])n++;}));return n;}
+
+function renderChips(curId){
+  $('chips').innerHTML=T.map(t=>`<button class="chip${t.id===curId?' on':''}" data-id="${t.id}" aria-pressed="${t.id===curId}">${t.name}<span class="cnt">${counts(t)}/6</span></button>`).join('');
+  $('chips').querySelectorAll('.chip').forEach(b=>b.addEventListener('click',()=>{location.hash=b.dataset.id;}));
+}
+function renderProgress(t){
+  const n=counts(t); $('progText').textContent=n+' von 6 Aufgaben gelöst'; $('progBar').style.width=(n/6*100)+'%';
+}
+function show(id){
+  const t=T.find(x=>x.id===id)||T[0];
+  renderChips(t.id);
+  $('explain').innerHTML=`<div class="kicker">Kurz erklärt</div><h2>${t.name}</h2><p>${t.intro}</p>
+    <div class="formula">${t.formula.map(f=>`<span>${esc(f)}</span>`).join('')}</div>
+    <div class="example"><b>Beispiel: ${esc(t.example[0])}</b><span class="muted">${esc(t.example[1])}</span></div>
+    <div class="trick"><b>Kopfrechentrick:</b> ${t.trick}</div>`;
+  const box=$('levels'); box.innerHTML='';
+  t.tasks.forEach((lvl,li)=>{
+    const sec=document.createElement('section'); sec.className='level';
+    sec.innerHTML=`<div class="levelhead"><span class="stars">${'●'.repeat(li+1)}${'○'.repeat(2-li)}</span><h3>${LV[li]}</h3></div>`;
+    lvl.forEach((task,ti)=>sec.appendChild(taskEl(t,task,li,ti)));
+    box.appendChild(sec);
+  });
+  renderProgress(t);
+}
+function taskEl(t,task,li,ti){
+  const key=t.id+'-'+li+'-'+ti, idp='i-'+key;
+  const d=document.createElement('div'); d.className='task'+(solved[key]?' ok':'');
+  let ctrl;
+  if(task.c){
+    ctrl=`<div class="choice">${task.c.map((c,i)=>`<button type="button" data-i="${i}">${esc(c)}</button>`).join('')}</div>`;
+  }else{
+    ctrl=`<div class="row"><label class="hidden" for="${idp}">Antwort</label><input type="text" id="${idp}" inputmode="decimal" autocomplete="off" placeholder="Antwort"><span class="unit">${esc(task.u||'')}</span><button type="button" class="primary chk">Prüfen</button></div>`;
+  }
+  d.innerHTML=`<p class="q">${esc(task.q)}</p>${ctrl}<p class="fb" aria-live="polite"></p>
+    <div class="row"><button type="button" class="showsol">Lösungsweg zeigen</button></div>
+    <div class="sol hidden"><b>Lösung: ${task.c?esc(task.c[task.a]):fmt(task.a)+' '+esc(task.u||'')}</b><span class="s">${esc(task.s)}</span></div>`;
+  const fb=d.querySelector('.fb');
+  function result(ok){
+    fb.className='fb '+(ok?'ok':'bad');
+    fb.textContent=ok?'Richtig!':'Noch nicht. Versuch es nochmal oder sieh dir den Lösungsweg an.';
+    d.classList.toggle('ok',ok); d.classList.toggle('bad',!ok);
+    if(ok&&!solved[key]){solved[key]=1; save(); renderProgress(t); renderChips(t.id);}
+  }
+  if(task.c){
+    d.querySelectorAll('.choice button').forEach(b=>b.addEventListener('click',()=>{
+      d.querySelectorAll('.choice button').forEach(x=>x.classList.remove('sel')); b.classList.add('sel');
+      result(Number(b.dataset.i)===task.a);
+    }));
+  }else{
+    const inp=d.querySelector('input');
+    const check=()=>{const v=parseNum(inp.value); if(isNaN(v)){fb.className='fb bad'; fb.textContent='Bitte eine Zahl eingeben, z. B. 9,6 oder 3/4.'; return;} result(Math.abs(v-task.a)<0.006);};
+    d.querySelector('.chk').addEventListener('click',check);
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter')check();});
+  }
+  const sb=d.querySelector('.showsol'), sol=d.querySelector('.sol');
+  sb.addEventListener('click',()=>{const h=sol.classList.toggle('hidden'); sb.textContent=h?'Lösungsweg zeigen':'Lösungsweg ausblenden';});
+  return d;
+}
+function fmt(n){
+  const fr={0.75:'3/4',[5/6]:'5/6',[2/3]:'2/3'};
+  for(const k in fr){if(Math.abs(n-Number(k))<1e-9)return fr[k];}
+  return String(n).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+}
+$('btnReset').addEventListener('click',()=>{
+  const id=(location.hash||'#'+T[0].id).slice(1);
+  Object.keys(solved).forEach(k=>{if(k.startsWith(id+'-'))delete solved[k];}); save(); show(id);
+});
+function route(){show((location.hash||'').slice(1)||T[0].id);}
+window.addEventListener('hashchange',()=>{route(); window.scrollTo(0,0);});
+route();
+})();
+</script>
+</body>
+</html>
